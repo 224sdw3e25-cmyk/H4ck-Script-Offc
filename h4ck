@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H4CK SCRIPT V2.5 | Ultimate Client Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* =========================================
+           🎨 CSS ПЕРЕМЕННЫЕ И СБРОС (THEME V2.5)
+           ========================================= */
+        :root {
+            --bg-color: #030407;
+            --main-accent: #bc13fe; 
+            --main-accent-rgb: 188, 19, 254;
+            --secondary-accent: #4c1186; 
+            --text-color: #e0e0e0;
+            --panel-bg: rgba(12, 13, 20, 0.75);
+            --glass-border: rgba(var(--main-accent-rgb), 0.25);
+            --glow-shadow: 0 0 15px rgba(var(--main-accent-rgb), 0.5);
+            --glow-heavy: 0 0 30px rgba(var(--main-accent-rgb), 0.8), inset 0 0 15px rgba(var(--main-accent-rgb), 0.3);
+            --neon-text-shadow: 0 0 10px rgba(var(--main-accent-rgb), 0.8), 0 0 20px rgba(var(--main-accent-rgb), 0.5);
+            
+            --premium-color: #ffd700;
+            --premium-rgb: 255, 215, 0;
+            
+            --font-primary: 'Fira Code', monospace;
+            --font-logo: 'Orbitron', sans-serif;
+            
+            --transition-fast: 0.2s ease;
+            --transition-mid: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; cursor: none !important; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-primary); overflow: hidden; height: 100vh; width: 100vw; display: flex; user-select: none; }
+        a { text-decoration: none; color: inherit; transition: var(--transition-fast); }
+        ul { list-style: none; }
+        button { background: none; border: none; font-family: inherit; color: inherit; cursor: none; }
+
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb { background: rgba(var(--main-accent-rgb), 0.4); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--main-accent); }
+
+        /* =========================================
+           🌌 ФОН (Galaxy Canvas)
+           ========================================= */
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #0a0410 0%, #030407 100%); }
+
+        /* =========================================
+           🎬 ЗАСТАВКА (Intro)
+           ========================================= */
+        #intro-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-color); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity var(--transition-slow), visibility var(--transition-slow), filter var(--transition-slow); }
+        #intro-screen.fade-out { opacity: 0; visibility: hidden; filter: blur(30px) scale(1.2); }
+        .intro-title { font-family: var(--font-logo); font-size: 5rem; color: #fff; text-shadow: var(--neon-text-shadow); margin-bottom: 20px; opacity: 0; animation: fadeInZoom 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s; letter-spacing: 5px; }
+        .intro-status { font-size: 1.2rem; color: var(--main-accent); opacity: 0; animation: fadeIn 0.5s ease forwards 1.2s; font-weight: 500; text-transform: uppercase; letter-spacing: 2px; }
+        .intro-loader { width: 300px; height: 3px; background: rgba(255,255,255,0.05); margin-top: 25px; position: relative; overflow: hidden; border-radius: 3px; }
+        .intro-loader-bar { position: absolute; height: 100%; width: 0; background: var(--main-accent); box-shadow: var(--glow-heavy); animation: loadProgress 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards 1.5s; }
+
+        /* =========================================
+           🧱 ОБЩИЙ LAYOUT APPS
+           ========================================= */
+        .app-container { display: flex; width: 100%; height: 100%; padding: 20px; gap: 20px; opacity: 0; transform: scale(0.95); transition: opacity var(--transition-slow), transform var(--transition-slow); transition-delay: 0.8s; z-index: 10; }
+        .app-container.show { opacity: 1; transform: scale(1); }
+
+        .glass-panel { background: var(--panel-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 16px; box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(var(--main-accent-rgb), 0.05); overflow: hidden; position: relative; }
+        .glass-panel::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent); transform: skewX(-20deg); animation: shine 6s infinite; pointer-events: none; }
+        @keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+
+        /* =========================================
+           📑 БОКОВАЯ ПАНЕЛЬ И ПЕРЕКЛЮЧАТЕЛЬ ИГР
+           ========================================= */
+        .sidebar { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; padding: 25px 0; z-index: 20; }
+        .brand { padding: 0 25px; margin-bottom: 20px; position: relative; text-align: center; }
+        .logo-text { font-family: var(--font-logo); font-size: 1.8rem; font-weight: 900; color: #fff; text-shadow: var(--neon-text-shadow); animation: logoBreath 3s infinite alternate; letter-spacing: 2px; }
+
+        /* GAME SWITCHER */
+        .game-switcher { display: flex; gap: 10px; padding: 0 20px; margin-bottom: 25px; }
+        .game-btn { flex: 1; padding: 10px 5px; border-radius: 8px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.5); font-weight: bold; font-family: var(--font-logo); font-size: 0.85rem; transition: var(--transition-mid); display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .game-btn i { font-size: 1.2rem; }
+        .game-btn:hover { background: rgba(255,255,255,0.05); color: #fff; transform: translateY(-2px); }
+        .game-btn.active { background: var(--main-accent); color: #fff; box-shadow: var(--glow-shadow); border-color: var(--main-accent); }
+
+        .nav-menu { display: flex; flex-direction: column; gap: 8px; padding: 0 15px; overflow-y: auto; flex-grow: 1; }
+        .nav-group { display: none; flex-direction: column; gap: 8px; animation: fadeIn 0.4s ease; }
+        .nav-group.active { display: flex; }
+
+        .nav-item { width: 100%; }
+        .nav-category { font-size: 0.65rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; margin: 15px 0 5px 15px; font-weight: bold; }
+        
+        .nav-link { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-radius: 10px; font-size: 0.95rem; font-weight: 500; color: rgba(224, 224, 224, 0.6); position: relative; transition: var(--transition-mid); width: 100%; text-align: left; background: transparent; border: 1px solid transparent; }
+        .nav-link-left { display: flex; align-items: center; }
+        .nav-link-left i { margin-right: 15px; width: 22px; text-align: center; font-size: 1.1rem; transition: var(--transition-mid); }
+        .nav-badge { background: var(--main-accent); color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; font-weight: bold; box-shadow: var(--glow-shadow); }
+
+        .nav-link:hover { color: #fff; background: rgba(var(--main-accent-rgb), 0.08); transform: translateX(5px); border-color: rgba(var(--main-accent-rgb), 0.2); }
+        .nav-link:hover .nav-link-left i { color: var(--main-accent); text-shadow: var(--neon-text-shadow); transform: scale(1.2); }
+        .nav-item.active .nav-link { color: #fff; background: rgba(var(--main-accent-rgb), 0.15); border: 1px solid rgba(var(--main-accent-rgb), 0.4); box-shadow: var(--glow-heavy); }
+        .nav-item.active .nav-link .nav-link-left i { color: var(--main-accent); text-shadow: var(--neon-text-shadow); }
+        .nav-item.active .nav-link::before { content: ''; position: absolute; left: -1px; top: 20%; height: 60%; width: 4px; background: var(--main-accent); border-radius: 0 4px 4px 0; box-shadow: var(--glow-shadow); }
+
+        .sidebar-footer { padding: 20px 25px 0 25px; border-top: 1px solid var(--glass-border); margin-top: auto; }
+        .lang-switcher { display: flex; gap: 10px; margin-bottom: 15px; font-size: 0.85rem; justify-content: center; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .lang-btn { color: rgba(224, 224, 224, 0.4); transition: var(--transition-fast); padding: 5px 15px; border-radius: 6px; font-weight: bold; width: 50%; text-align: center; }
+        .lang-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .lang-btn.active { color: #fff; background: var(--main-accent); box-shadow: var(--glow-shadow); text-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        .author { font-size: 0.7rem; color: rgba(224, 224, 224, 0.3); text-align: center; letter-spacing: 1px;}
+
+        /* =========================================
+           ОСНОВНОЙ КОНТЕНТ И СТРАНИЦЫ
+           ========================================= */
+        .main-content { flex-grow: 1; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        .content-header { height: 65px; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; flex-shrink: 0; background: rgba(0,0,0,0.2); }
+        .header-title { font-family: var(--font-logo); color: #fff; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; opacity: 0.8; }
+        .sys-info { display: flex; gap: 20px; font-size: 0.8rem; color: rgba(255,255,255,0.7); font-family: var(--font-primary); background: rgba(0,0,0,0.4); padding: 8px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .sys-item { display: flex; align-items: center; }
+        .sys-item i { margin-right: 8px; color: var(--main-accent); text-shadow: 0 0 5px var(--main-accent); }
+        .sys-val { font-weight: bold; color: #fff; margin-left: 5px; min-width: 30px; display: inline-block;}
+
+        .page-container { flex-grow: 1; position: relative; overflow: hidden; padding: 25px; }
+        .page { position: absolute; top: 25px; left: 25px; right: 25px; bottom: 25px; opacity: 0; visibility: hidden; transform: translateY(30px) scale(0.98); transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.4s ease; display: flex; flex-direction: column; overflow-y: auto; padding-right: 15px; z-index: 1; }
+        .page.active-page { opacity: 1; visibility: visible; transform: translateY(0) scale(1); z-index: 5; }
+
+        h1.page-title { font-family: var(--font-logo); font-size: 2.5rem; color: #fff; margin-bottom: 25px; text-shadow: var(--neon-text-shadow); display: flex; align-items: center; gap: 20px; text-transform: uppercase; letter-spacing: 2px;}
+        h1.page-title i { color: var(--main-accent); font-size: 2rem; background: rgba(var(--main-accent-rgb), 0.1); padding: 15px; border-radius: 12px; border: 1px solid rgba(var(--main-accent-rgb), 0.3); box-shadow: var(--glow-shadow); }
+
+        .content-block { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 25px; margin-bottom: 25px; transition: var(--transition-mid); position: relative; overflow: hidden; }
+        .content-block:hover { border-color: rgba(var(--main-accent-rgb), 0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateY(-2px); }
+        h2.block-title { font-size: 1.3rem; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        h2.block-title::before { content: ''; display: block; width: 4px; height: 20px; background: var(--main-accent); border-radius: 4px; box-shadow: var(--glow-shadow); }
+
+        .btn-neon { padding: 14px 35px; border: 1px solid var(--main-accent); border-radius: 8px; color: #fff; font-family: var(--font-logo); font-weight: 700; text-transform: uppercase; font-size: 1rem; letter-spacing: 1.5px; position: relative; transition: var(--transition-mid); overflow: hidden; z-index: 1; background: rgba(var(--main-accent-rgb), 0.1); display: inline-flex; align-items: center; gap: 10px; cursor: none; }
+        .btn-neon::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: var(--transition-mid); z-index: -1; }
+        .btn-neon:hover { background: var(--main-accent); box-shadow: var(--glow-heavy); transform: translateY(-3px); }
+        .btn-neon:hover::before { left: 100%; transition: 0.6s ease; }
+        .btn-neon:active { transform: translateY(1px); }
+
+        /* =========================================
+           🏠 ГЛАВНАЯ (Home)
+           ========================================= */
+        #page-home { justify-content: center; align-items: center; text-align: center; }
+        .welcome-section { max-width: 800px; display: flex; flex-direction: column; align-items: center; }
+        .big-logo { font-family: var(--font-logo); font-size: 5.5rem; font-weight: 900; color: #fff; text-shadow: var(--neon-text-shadow); animation: logoBreath 3s infinite alternate; margin-bottom: 15px; letter-spacing: -2px; }
+        .typewriter-container { font-size: 1.5rem; color: rgba(255,255,255,0.8); min-height: 2em; margin-bottom: 40px; font-weight: 300; }
+        #tw-text { color: var(--main-accent); font-weight: bold; border-right: 3px solid var(--main-accent); padding-right: 8px; animation: blink 0.8s step-end infinite; text-shadow: 0 0 10px rgba(var(--main-accent-rgb), 0.5); }
+        .status-badge { display: inline-flex; align-items: center; gap: 10px; background: rgba(46, 213, 115, 0.1); border: 1px solid rgba(46, 213, 115, 0.3); padding: 10px 25px; border-radius: 30px; color: #2ed573; font-weight: bold; font-family: var(--font-logo); letter-spacing: 1px; box-shadow: 0 0 20px rgba(46, 213, 115, 0.2); margin-bottom: 40px; }
+        .status-dot { width: 10px; height: 10px; background: #2ed573; border-radius: 50%; box-shadow: 0 0 10px #2ed573; animation: pulseDot 2s infinite; }
+        .action-btns { display: flex; gap: 25px; justify-content: center; }
+
+        /* =========================================
+           💻 СКРИПТЫ & КАРТОЧКИ (Roblox & MC)
+           ========================================= */
+        .code-wrapper { position: relative; margin-bottom: 20px; }
+        .code-header { background: #1a1b26; padding: 10px 15px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.1); border-bottom: none; }
+        .code-lang { color: rgba(255,255,255,0.5); font-size: 0.8rem; text-transform: uppercase; font-weight: bold; }
+        .code-dots { display: flex; gap: 6px; }
+        .code-dots span { width: 12px; height: 12px; border-radius: 50%; }
+        .code-dots span:nth-child(1) { background: #ff5f56; }
+        .code-dots span:nth-child(2) { background: #ffbd2e; }
+        .code-dots span:nth-child(3) { background: #27c93f; }
+        .code-box { background: #111219; border: 1px solid rgba(255,255,255,0.1); border-radius: 0 0 8px 8px; padding: 20px; font-family: 'Consolas', monospace; color: #a9b1d6; font-size: 1rem; position: relative; word-break: break-all; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); line-height: 1.5; }
+        .code-func { color: #7aa2f7; } .code-string { color: #9ece6a; }
+
+        .btn-copy-main { width: 100%; padding: 15px; background: rgba(var(--main-accent-rgb), 0.15); border: 1px dashed var(--main-accent); border-radius: 8px; color: #fff; font-size: 1.1rem; font-weight: bold; transition: var(--transition-mid); display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-copy-main:hover { background: var(--main-accent); border-style: solid; box-shadow: var(--glow-heavy); transform: translateY(-2px); }
+
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        .script-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 25px; transition: var(--transition-mid); position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        .script-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--glass-border); transition: var(--transition-mid); }
+        .script-card:hover { border-color: rgba(var(--main-accent-rgb), 0.4); transform: translateY(-8px); background: rgba(var(--main-accent-rgb), 0.05); box-shadow: 0 15px 30px rgba(0,0,0,0.5), var(--glow-shadow); }
+        .script-card:hover::before { background: var(--main-accent); box-shadow: var(--glow-shadow); }
+
+        .card-tag { position: absolute; top: 15px; right: 15px; font-size: 0.7rem; font-weight: bold; padding: 4px 10px; border-radius: 6px; color: #fff; letter-spacing: 1px; }
+        .card-tag.hot { background: linear-gradient(45deg, #ff4757, #ff6b81); box-shadow: 0 0 15px rgba(255, 71, 87, 0.6); }
+        .card-tag.upd { background: linear-gradient(45deg, #2ed573, #7bed9f); box-shadow: 0 0 15px rgba(46, 213, 115, 0.6); }
+
+        .card-icon { font-size: 2.5rem; color: var(--main-accent); margin-bottom: 15px; text-shadow: var(--neon-text-shadow); transition: transform 0.3s ease; }
+        .script-card:hover .card-icon { transform: scale(1.1) rotate(5deg); }
+        .card-title { font-size: 1.3rem; color: #fff; margin-bottom: 10px; font-family: var(--font-logo); }
+        .card-desc { font-size: 0.9rem; color: rgba(224, 224, 224, 0.6); margin-bottom: 25px; flex-grow: 1; line-height: 1.5; }
+        
+        .card-btn { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; text-align: center; font-size: 0.95rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); transition: var(--transition-mid); display: flex; justify-content: center; align-items: center; gap: 8px; color: #fff; }
+        .script-card:hover .card-btn { background: rgba(var(--main-accent-rgb), 0.2); border-color: var(--main-accent); color: #fff; box-shadow: inset 0 0 10px rgba(var(--main-accent-rgb), 0.3); }
+        .card-btn.copied { background: #2ed573 !important; border-color: #2ed573 !important; color: #fff !important; box-shadow: 0 0 15px rgba(46, 213, 115, 0.5) !important; }
+
+        /* Premium Delta Card */
+        .script-card.premium { border-color: rgba(var(--premium-rgb), 0.4); background: linear-gradient(145deg, rgba(var(--premium-rgb), 0.05) 0%, rgba(0,0,0,0.5) 100%); }
+        .script-card.premium::before { background: var(--premium-color); }
+        .script-card.premium:hover { border-color: var(--premium-color); box-shadow: 0 15px 30px rgba(0,0,0,0.6), 0 0 30px rgba(var(--premium-rgb), 0.4); background: linear-gradient(145deg, rgba(var(--premium-rgb), 0.1) 0%, rgba(0,0,0,0.6) 100%); }
+        .script-card.premium .card-icon { color: var(--premium-color); text-shadow: 0 0 15px var(--premium-color); }
+        .script-card.premium .card-tag.pro { background: linear-gradient(45deg, #f1c40f, #f39c12); box-shadow: 0 0 15px rgba(241, 196, 15, 0.6); color: #000; }
+        .script-card.premium .card-btn { border-color: rgba(var(--premium-rgb), 0.3); color: var(--premium-color); }
+        .script-card.premium:hover .card-btn { background: rgba(var(--premium-rgb), 0.2); border-color: var(--premium-color); color: #000; text-shadow: none; box-shadow: 0 0 10px var(--premium-color); }
+
+        /* =========================================
+           📜 ROBLOX UPDATE
+           ========================================= */
+        .timeline { position: relative; padding-left: 30px; margin-top: 20px; }
+        .timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.1); }
+        .update-card { position: relative; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; margin-bottom: 25px; transition: var(--transition-mid); width: 100%; }
+        .update-card::before { content: ''; position: absolute; left: -35px; top: 25px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg-color); border: 2px solid var(--main-accent); box-shadow: 0 0 10px var(--main-accent); transition: var(--transition-mid); }
+        .update-card:hover { transform: translateX(10px) translateY(-5px); border-color: rgba(var(--main-accent-rgb), 0.5); box-shadow: 0 10px 25px rgba(0,0,0,0.5), var(--glow-shadow); background: rgba(var(--main-accent-rgb), 0.05); }
+        .update-card:hover::before { background: var(--main-accent); transform: scale(1.5); }
+        .update-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px; }
+        .update-ver { font-size: 1.4rem; font-family: var(--font-logo); color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .update-card:first-child .update-ver { color: var(--main-accent); text-shadow: var(--neon-text-shadow); }
+        .update-date { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+        .update-list { list-style: none; }
+        .update-item { display: flex; align-items: flex-start; margin-bottom: 10px; color: rgba(224, 224, 224, 0.8); font-size: 0.95rem; line-height: 1.4; transition: transform 0.2s; }
+        .update-item:hover { transform: translateX(5px); color: #fff; }
+        .update-item i { color: #2ed573; margin-right: 12px; margin-top: 3px; font-size: 0.8rem; text-shadow: 0 0 5px #2ed573; }
+        .update-item.feature i { color: var(--main-accent); text-shadow: 0 0 5px var(--main-accent); }
+
+        /* =========================================
+           ⛏ MINECRAFT HELP
+           ========================================= */
+        .mc-help-box { background: rgba(0,0,0,0.3); border-left: 4px solid var(--secondary-accent); padding: 20px; border-radius: 0 8px 8px 0; margin-bottom: 20px; }
+        .mc-help-title { color: #fff; font-size: 1.1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .mc-help-title i { color: var(--main-accent); }
+        .mc-help-list li { margin-bottom: 8px; padding-left: 20px; position: relative; color: rgba(255,255,255,0.7); line-height: 1.4; }
+        .mc-help-list li::before { content: '›'; position: absolute; left: 0; color: var(--main-accent); font-weight: bold; font-size: 1.2rem; line-height: 1; }
+        .warning-box { border-left-color: #ff4757; background: rgba(255, 71, 87, 0.05); }
+        .warning-box .mc-help-title i { color: #ff4757; }
+
+        /* =========================================
+           ⚙️ НАСТРОЙКИ & КОНСОЛЬ & EXTERNAL
+           ========================================= */
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .setting-info { flex-grow: 1; }
+        .setting-name { color: #fff; font-size: 1.1rem; margin-bottom: 5px; }
+        .setting-desc { color: rgba(255,255,255,0.5); font-size: 0.85rem; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 34px; border: 1px solid rgba(255,255,255,0.2); }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: #fff; transition: .4s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        input:checked + .slider { background-color: var(--main-accent); border-color: var(--main-accent); box-shadow: 0 0 10px rgba(var(--main-accent-rgb), 0.5); }
+        input:checked + .slider:before { transform: translateX(24px); }
+        .color-options { display: flex; gap: 15px; }
+        .color-btn { width: 35px; height: 35px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); transition: var(--transition-fast); }
+        .color-btn:hover { transform: scale(1.1); border-color: #fff; }
+        .color-btn.active { border-color: #fff; box-shadow: 0 0 15px currentColor; transform: scale(1.1); }
+        
+        .terminal-container { background: #050505; border: 1px solid #333; border-radius: 8px; height: 400px; display: flex; flex-direction: column; overflow: hidden; box-shadow: inset 0 0 20px #000; font-family: 'Consolas', monospace; }
+        .terminal-header { background: #111; padding: 8px 15px; font-size: 0.8rem; color: #888; border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; }
+        .terminal-output { flex-grow: 1; padding: 15px; overflow-y: auto; color: #0f0; font-size: 0.9rem; line-height: 1.5; text-shadow: 0 0 3px rgba(0,255,0,0.5); }
+        .terminal-output p { margin-bottom: 5px; }
+        .term-err { color: #ff4757; text-shadow: 0 0 3px #ff4757; }
+        .term-sys { color: #7aa2f7; }
+        .terminal-input-line { display: flex; padding: 10px 15px; background: rgba(0,255,0,0.05); border-top: 1px solid #222; }
+        .terminal-prompt { color: #0f0; margin-right: 10px; font-weight: bold; }
+        .terminal-input { flex-grow: 1; background: transparent; border: none; color: #fff; font-family: 'Consolas', monospace; font-size: 0.9rem; }
+
+        .iframe-container { flex-grow: 1; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); position: relative; min-height: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .iframe-container iframe { width: 100%; height: 100%; border: none; background: #000; }
+        .external-link-block { text-align: center; padding: 60px 20px; display: flex; flex-direction: column; align-items: center; }
+        .ext-icon { font-size: 4rem; color: var(--main-accent); margin-bottom: 25px; text-shadow: var(--neon-text-shadow); animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        .email-box { font-family: var(--font-primary); color: #fff; font-size: 1.5rem; font-weight: bold; background: rgba(0,0,0,0.5); padding: 20px 40px; border-radius: 12px; border: 2px dashed var(--main-accent); margin-top: 20px; text-shadow: var(--neon-text-shadow); letter-spacing: 2px; }
+
+        /* =========================================
+           🎧 МИНИ-ПЛЕЕР & КУРСОР
+           ========================================= */
+        #music-player { position: fixed; bottom: 30px; right: 30px; width: 320px; height: 85px; z-index: 100; cursor: grab; transition: box-shadow var(--transition-mid), border-color var(--transition-mid), transform 0.2s; border-radius: 16px; background: rgba(10,10,15,0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+        #music-player:active { cursor: grabbing; transform: scale(0.98); }
+        #music-player.dragging { opacity: 0.9; box-shadow: 0 20px 40px rgba(0,0,0,0.6), var(--glow-heavy); border-color: var(--main-accent); }
+        .player-header { height: 20px; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .drag-handle { width: 50px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 4px; transition: 0.2s; }
+        .player-header:hover .drag-handle { background: var(--main-accent); box-shadow: 0 0 5px var(--main-accent); }
+        .player-content { height: 65px; width: 100%; overflow: hidden; position: relative; }
+        #music-player iframe { border: none; width: 100%; height: 100px; margin-top: -20px; pointer-events: none; opacity: 0.1; }
+        .player-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 65px; display: flex; align-items: center; padding: 0 20px; background: transparent; }
+        .album-art { width: 45px; height: 45px; border-radius: 8px; background: linear-gradient(135deg, var(--secondary-accent), var(--main-accent)); margin-right: 15px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative; overflow: hidden;}
+        .album-art::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(rgba(255,255,255,0.2), transparent); }
+        .track-info { flex-grow: 1; font-size: 0.8rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;}
+        .track-title { color: #fff; font-weight: bold; margin-bottom: 4px; font-family: var(--font-logo); letter-spacing: 0.5px;}
+        .track-artist { color: rgba(224, 224, 224, 0.5); font-size: 0.7rem;}
+        .player-controls { display: flex; gap: 15px; color: #fff; font-size: 1.2rem; }
+        .player-controls button { transition: 0.2s; }
+        .player-controls button:hover { color: var(--main-accent); transform: scale(1.2); text-shadow: 0 0 10px var(--main-accent); }
+
+        #custom-cursor { width: 24px; height: 24px; border: 2px solid #fff; border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transition: transform 0.15s ease-out, border-color 0.2s ease, background-color 0.2s ease, width 0.2s ease, height 0.2s ease; transform: translate(-50%, -50%); box-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        #custom-cursor::after { content:''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 4px; height: 4px; background: #fff; border-radius: 50%; }
+        #custom-cursor.hover { width: 40px; height: 40px; border-color: var(--main-accent); background-color: rgba(var(--main-accent-rgb), 0.1); box-shadow: var(--glow-shadow); }
+        #custom-cursor.hover::after { background: var(--main-accent); box-shadow: 0 0 5px var(--main-accent); }
+
+        /* =========================================
+           🎬 АНИМАЦИИ
+           ========================================= */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInZoom { from { opacity: 0; transform: scale(0.5); filter: blur(20px); letter-spacing: -10px; } to { opacity: 1; transform: scale(1); filter: blur(0); letter-spacing: 5px; } }
+        @keyframes loadProgress { from { width: 0; } to { width: 100%; } }
+        @keyframes pulseDot { 0% { box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(46, 213, 115, 0); } 100% { box-shadow: 0 0 0 0 rgba(46, 213, 115, 0); } }
+        @keyframes logoBreath { 0% { text-shadow: var(--neon-text-shadow); } 100% { text-shadow: 0 0 20px rgba(var(--main-accent-rgb), 1), 0 0 40px rgba(var(--main-accent-rgb), 0.8), 0 0 15px #fff; } }
+        @keyframes blink { 50% { border-color: transparent; } }
+
+        #notif { position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px); background: rgba(10,10,15,0.9); border: 1px solid var(--main-accent); color: #fff; padding: 15px 30px; border-radius: 8px; font-size: 1rem; font-weight: bold; z-index: 10001; box-shadow: 0 10px 30px rgba(0,0,0,0.5), var(--glow-shadow); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(10px); pointer-events: none; display: flex; align-items: center; gap: 12px; }
+        #notif.show { transform: translateX(-50%) translateY(0); }
+        #notif i { color: #2ed573; font-size: 1.2rem; text-shadow: 0 0 10px #2ed573; }
+    </style>
+</head>
+<body>
+
+    <div id="custom-cursor"></div>
+    <div id="notif"><i class="fas fa-check-circle"></i> <span id="notif-msg">Скопировано!</span></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <div id="intro-screen">
+        <div class="intro-title">H4CK V2.5</div>
+        <div class="intro-status" id="intro-status">Initializing Core</div>
+        <div class="intro-loader"><div class="intro-loader-bar"></div></div>
+    </div>
+
+    <div class="app-container" id="app-container">
+        
+        <aside class="sidebar glass-panel">
+            <div class="brand">
+                <div class="logo-text">H4CK HUB</div>
+            </div>
+            
+            <div class="game-switcher">
+                <button class="game-btn active" data-game="roblox">
+                    <i class="fas fa-gamepad"></i> <span class="lang-id" data-key="sw_roblox">Roblox</span>
+                </button>
+                <button class="game-btn" data-game="minecraft">
+                    <i class="fas fa-cube"></i> <span class="lang-id" data-key="sw_minecraft">Minecraft</span>
+                </button>
+            </div>
+            
+            <nav class="nav-menu">
+                <li class="nav-item active" data-page="home">
+                    <button class="nav-link">
+                        <div class="nav-link-left"><i class="fas fa-house"></i> <span class="lang-id" data-key="nav_home">Главная</span></div>
+                    </button>
+                </li>
+
+                <div class="nav-group active" id="nav-roblox">
+                    <div class="nav-category lang-id" data-key="cat_tools_rbx">Инструменты Roblox</div>
+                    <li class="nav-item" data-page="script">
+                        <button class="nav-link">
+                            <div class="nav-link-left"><i class="fas fa-code"></i> <span class="lang-id" data-key="nav_script">Скрипт</span></div>
+                        </button>
+                    </li>
+                    <li class="nav-item" data-page="recom">
+                        <button class="nav-link">
+                            <div class="nav-link-left"><i class="fas fa-star"></i> <span class="lang-id" data-key="nav_recom">Рекомендуем</span></div>
+                            <span class="nav-badge">HOT</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" data-page="base">
+                        <button class="nav-link">
+                            <div class="nav-link-left"><i class="fas fa-database"></i> <span class="lang-id" data-key="nav_base">База Скриптов</span></div>
+                        </button>
+                    </li>
+                    <li class="nav-item" data-page="inject">
+                        <button class="nav-link">
+                            <div class="nav-link-left"><i class="fas fa-syringe"></i> <span class="lang-id" data-key="nav_inject">Инжектор</span></div>
+                        </button>
+                    </li>
+                    <div class="nav-category lang-id" data-key="cat_info">Информация</div>
+                    <li class="nav-item" data-page="update">
+                        <button class="nav-link">
+                            <div class="nav-link-left"><i class="fas fa-sync-alt"></i> <span class="lang-id" data-key="nav_update">Обновления</span></div>
+                            <span class="nav-badge" style="background: #ff4757;">v1.2</span>
+                        </button>
+                    </li>
+                </div>
+
+                <div class="nav-group" id="nav-minecraft">
+                    <div class="nav-category lang-id" data-key="cat_tools_mc">Инструменты Minecraft</div>
+                    <li class="nav-item" data-page="mc-clients">
+                        <button class="nav-link">
+                            <div class="nav-link-left"><i class="fas fa-download"></i> <span class="lang-id" data-key="nav_mc_clients">Клиенты</span></div>
+                            <span class="nav-badge" style="background: #2ed573;">NEW</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" data-page="mc-help">
+                        <button class="nav-link">
+                            <div class="nav-link-left"><i class="fas fa-question-circle"></i> <span class="lang-id" data-key="nav_mc_help">Инструкции</span></div>
+                        </button>
+                    </li>
+                </div>
+
+                <div class="nav-category lang-id" data-key="cat_system">Система</div>
+                <li class="nav-item" data-page="console">
+                    <button class="nav-link">
+                        <div class="nav-link-left"><i class="fas fa-terminal"></i> <span class="lang-id" data-key="nav_console">Консоль</span></div>
+                    </button>
+                </li>
+                <li class="nav-item" data-page="settings">
+                    <button class="nav-link">
+                        <div class="nav-link-left"><i class="fas fa-cog"></i> <span class="lang-id" data-key="nav_settings">Настройки</span></div>
+                    </button>
+                </li>
+                <li class="nav-item" data-page="ad">
+                    <button class="nav-link">
+                        <div class="nav-link-left"><i class="fas fa-ad"></i> <span class="lang-id" data-key="nav_ad">Реклама</span></div>
+                    </button>
+                </li>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="lang-switcher">
+                    <button class="lang-btn active" id="btn-ru">RU</button>
+                    <button class="lang-btn" id="btn-eng">ENG</button>
+                </div>
+                <div class="author">V2.5 PROUDLY BUILT</div>
+            </div>
+        </aside>
+
+        <main class="main-content glass-panel">
+            <header class="content-header">
+                <div class="header-title"><i class="fas fa-shield-alt"></i> H4CK PROTECTED</div>
+                <div class="sys-info">
+                    <div class="sys-item" title="Ping to Server"><i class="fas fa-wifi"></i> <span class="lang-id" data-key="sys_ping">Ping</span>: <span class="sys-val" id="ping-val">--</span>ms</div>
+                    <div class="sys-item" title="Frames Per Second"><i class="fas fa-tachometer-alt"></i> FPS: <span class="sys-val" id="fps-val">--</span></div>
+                    <div class="sys-item" title="Your IP Address"><i class="fas fa-network-wired"></i> IP: <span class="sys-val" id="ip-val">detecting...</span></div>
+                </div>
+            </header>
+            
+            <div class="page-container">
+                
+                <div class="page active-page" id="page-home">
+                    <div style="display: flex; justify-content: center; width: 100%; height: 100%; align-items: center;">
+                        <div class="welcome-section">
+                            <div class="status-badge"><div class="status-dot"></div> <span class="lang-id" data-key="home_status">UNDETECTED & ONLINE</span></div>
+                            <div class="big-logo">H4CK SCRIPT V2.5</div>
+                            
+                            <div class="typewriter-container">
+                                <span class="lang-id" data-key="welcome_text">Мы предоставляем</span> 
+                                <span id="tw-text"></span>
+                            </div>
+
+                            <div class="content-block" style="width: 100%; max-width: 650px; text-align: left; background: rgba(0,0,0,0.6);">
+                                <h2 class="block-title lang-id" data-key="home_news_title">Последние новости</h2>
+                                <p style="color: rgba(255,255,255,0.7); line-height: 1.6; font-size: 0.95rem;">
+                                    <strong style="color: var(--main-accent);" class="lang-id" data-key="home_news_date">Сегодня:</strong> 
+                                    <span class="lang-id" data-key="home_news_text">Релиз V2.5! Интегрирован глобальный переключатель игр. Клиенты Minecraft вынесены в удобную структуру. Delta Client теперь доступен по прямой ссылке разработчика.</span>
+                                </p>
+                            </div>
+
+                            <div class="action-btns">
+                                <button class="btn-neon navigate-btn" data-target="script"><i class="fas fa-rocket"></i> <span class="lang-id" data-key="btn_start">Начать</span></button>
+                                <button class="btn-neon navigate-btn" data-target="console" style="--main-accent: #2ed573; --main-accent-rgb: 46, 213, 115;"><i class="fas fa-terminal"></i> <span class="lang-id" data-key="btn_console">Система</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="page-script">
+                    <h1 class="page-title"><i class="fas fa-code"></i> <span class="lang-id" data-key="nav_script">Скрипт</span></h1>
+                    
+                    <div class="content-block">
+                        <h2 class="block-title lang-id" data-key="script_load_title">Универсальный Загрузчик V2</h2>
+                        <p class="lang-id" data-key="script_desc" style="margin-bottom: 25px; font-size: 0.95rem; color: rgba(224,224,224,0.7); line-height: 1.5;">Скопируйте код ниже и вставьте в ваш экзекутор (рекомендуется Xeno или Electron). Скрипт автоматически обновляется из облака.</p>
+                        
+                        <div class="code-wrapper">
+                            <div class="code-header">
+                                <div class="code-dots"><span></span><span></span><span></span></div>
+                                <div class="code-lang">LUA</div>
+                            </div>
+                            <div class="code-box" id="script-code">
+                                <span class="code-func">getgenv</span>().Theme = <span class="code-string">"DarkNeon"</span><br>
+                                <span class="code-func">loadstring</span>(game:<span class="code-func">HttpGet</span>(<span class="code-string">'https://raw.githubusercontent.com/h4ck-team/v2/main/loader.lua'</span>))()
+                            </div>
+                        </div>
+                        
+                        <button class="btn-copy-main" id="btn-copy-script">
+                            <i class="fas fa-copy"></i> <span class="lang-id" data-key="btn_copy_large">СКОПИРОВАТЬ СКРИПТ</span>
+                        </button>
+                    </div>
+
+                    <div class="content-block" style="border-left: 4px solid #ffbd2e;">
+                        <h2 class="block-title" style="color: #ffbd2e; border: none; padding: 0;"><i class="fas fa-exclamation-triangle"></i> <span class="lang-id" data-key="script_warn_title">Внимание</span></h2>
+                        <p class="lang-id" data-key="script_warn_text" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.5;">Наш скрипт работает по системе Keyless (без ключа). Остерегайтесь подделок. Оригинальный лоадер находится только на этом сайте.</p>
+                    </div>
+                </div>
+
+                <div class="page" id="page-recom">
+                    <h1 class="page-title"><i class="fas fa-star"></i> <span class="lang-id" data-key="nav_recom">Рекомендуем</span></h1>
+                    <p class="lang-id" data-key="recom_subtitle" style="color: rgba(255,255,255,0.6); margin-bottom: 30px; font-size: 1.1rem;">Лучшие проверенные скрипты от наших партнеров. Копируй в один клик.</p>
+                    
+                    <div class="cards-grid">
+                        <div class="script-card">
+                            <span class="card-tag hot">HOT</span>
+                            <div class="card-icon"><i class="fas fa-crosshairs"></i></div>
+                            <h3 class="card-title">Phantom Hub</h3>
+                            <p class="card-desc lang-id" data-key="card_1_desc">Лучший аимбот и ESP для шутеров (TSB и др.). Полностью настраиваемый.</p>
+                            <button class="card-btn copy-recom-btn" data-script='loadstring(game:HttpGet("https://raw.githubusercontent.com/ATrainz/Phantasm/refs/heads/main/Games/TSB.lua"))()'>
+                                <i class="fas fa-copy"></i> <span class="lang-id" data-key="btn_copy">Скопировать</span>
+                            </button>
+                        </div>
+                        
+                        <div class="script-card">
+                            <span class="card-tag upd">UPDATED</span>
+                            <div class="card-icon"><i class="fas fa-coins"></i></div>
+                            <h3 class="card-title">AutoFarm Tycoon</h3>
+                            <p class="card-desc lang-id" data-key="card_2_desc">Автоматический фарм денег и ресурсов в популярных тайкунах. Без вылетов.</p>
+                            <button class="card-btn copy-recom-btn" data-script='loadstring(game:HttpGet("https://pastebin.com/raw/sq2tZE4C",true))()'>
+                                <i class="fas fa-copy"></i> <span class="lang-id" data-key="btn_copy">Скопировать</span>
+                            </button>
+                        </div>
+                        
+                        <div class="script-card">
+                            <span class="card-tag" style="background: var(--main-accent);">FUN</span>
+                            <div class="card-icon"><i class="fas fa-theater-masks"></i></div>
+                            <h3 class="card-title">TrollMaster X</h3>
+                            <p class="card-desc lang-id" data-key="card_3_desc">Набор крутых инструментов для троллинга: fling, chat spam, FE эффекты.</p>
+                            <button class="card-btn copy-recom-btn" data-script='loadstring(game:HttpGet("https://raw.githubusercontent.com/Front-Evill/Script-Hub/refs/heads/main/Trolling-Map-S.lua"))()'>
+                                <i class="fas fa-copy"></i> <span class="lang-id" data-key="btn_copy">Скопировать</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="page-mc-clients">
+                    <h1 class="page-title"><i class="fas fa-download"></i> <span class="lang-id" data-key="nav_mc_clients">Клиенты Minecraft</span></h1>
+                    <p class="lang-id" data-key="mc_clients_sub" style="color: rgba(255,255,255,0.6); margin-bottom: 30px; font-size: 1.1rem;">Проверенные клиенты для анархии и мини-игр.</p>
+
+                    <div class="cards-grid">
+                        <div class="script-card">
+                            <div class="card-icon"><i class="fas fa-meteor"></i></div>
+                            <h3 class="card-title">Meteor Client</h3>
+                            <p class="card-desc lang-id" data-key="mc_meteor_desc">Легендарный бесплатный клиент для анархии. Встроенный Baritone и сотни модулей.</p>
+                            <a href="https://meteorclient.com/" target="_blank" class="card-btn"><i class="fas fa-external-link-alt"></i> <span class="lang-id" data-key="btn_download_site">Перейти на сайт</span></a>
+                        </div>
+                        
+                        <div class="script-card">
+                            <span class="card-tag upd">V1.19.4+</span>
+                            <div class="card-icon"><i class="fas fa-venus"></i></div>
+                            <h3 class="card-title">VenusFree</h3>
+                            <p class="card-desc lang-id" data-key="mc_venus_desc">Мощный клиент с упором на PvP составляющую. Отличный KillAura и AutoTotem.</p>
+                            <a href="javascript:void(0)" onclick="document.getElementById('notif-msg').textContent='Загрузка начнется через секунду'; document.getElementById('notif').classList.add('show'); setTimeout(()=>document.getElementById('notif').classList.remove('show'),2000);" class="card-btn"><i class="fas fa-download"></i> <span class="lang-id" data-key="btn_download_direct">Скачать (.jar)</span></a>
+                        </div>
+
+                        <div class="script-card premium">
+                            <span class="card-tag pro">EXTERNAL</span>
+                            <div class="card-icon"><i class="fas fa-gem"></i></div>
+                            <h3 class="card-title">Delta Client</h3>
+                            <p class="card-desc lang-id" data-key="mc_delta_desc">Приватный чит элитного уровня. Обход анти-читов на топовых серверах, уникальный дизайн.</p>
+                            <a href="https://deltaclient.app/" target="_blank" class="card-btn"><i class="fas fa-globe"></i> <span class="lang-id" data-key="btn_download_off">Официальный сайт</span></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="page-mc-help">
+                    <h1 class="page-title"><i class="fas fa-question-circle"></i> <span class="lang-id" data-key="nav_mc_help">Инструкции Minecraft</span></h1>
+                    <div class="content-block">
+                        <div class="mc-help-box">
+                            <div class="mc-help-title"><i class="fas fa-tools"></i> <span class="lang-id" data-key="mc_help_1_title">Как установить клиент (Fabric)</span></div>
+                            <ul class="mc-help-list">
+                                <li class="lang-id" data-key="mc_help_1_1">Скачайте и установите Fabric Loader для вашей версии Minecraft.</li>
+                                <li class="lang-id" data-key="mc_help_1_2">Скачайте файл клиента (.jar) из вкладки "Клиенты".</li>
+                                <li class="lang-id" data-key="mc_help_1_3">Нажмите Win+R, введите %appdata%/.minecraft/mods и нажмите Enter.</li>
+                                <li class="lang-id" data-key="mc_help_1_4">Переместите скачанный .jar файл в папку mods.</li>
+                                <li class="lang-id" data-key="mc_help_1_5">Запустите лаунчер, выберите профиль Fabric и играйте!</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mc-help-box">
+                            <div class="mc-help-title"><i class="fas fa-lightbulb"></i> <span class="lang-id" data-key="mc_help_2_title">Советы</span></div>
+                            <ul class="mc-help-list">
+                                <li class="lang-id" data-key="mc_help_2_1">Меню чита обычно открывается на правый Shift (RShift) или кнопку Insert.</li>
+                                <li class="lang-id" data-key="mc_help_2_2">Бинды модулей можно настроить в самом GUI клиента.</li>
+                            </ul>
+                        </div>
+
+                        <div class="mc-help-box warning-box">
+                            <div class="mc-help-title"><i class="fas fa-skull-crossbones"></i> <span class="lang-id" data-key="mc_help_3_title">Предупреждения</span></div>
+                            <ul class="mc-help-list">
+                                <li class="lang-id" data-key="mc_help_3_1">Использование на лицензионных серверах (Hypixel и др.) может привести к бану.</li>
+                                <li class="lang-id" data-key="mc_help_3_2">Не качайте клиенты из сомнительных источников, используйте только ссылки в нашем хабе.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="page-update">
+                    <h1 class="page-title"><i class="fas fa-sync-alt"></i> <span class="lang-id" data-key="nav_update">Обновления</span></h1>
+                    <div class="timeline">
+                        <div class="update-card">
+                            <div class="update-header">
+                                <div class="update-ver">Версия 1.2</div>
+                                <div class="update-date lang-id" data-key="upd_current">Текущая версия</div>
+                            </div>
+                            <ul class="update-list">
+                                <li class="update-item"><i class="fas fa-arrow-up"></i> <span class="lang-id" data-key="upd_12_1">Обновлен Fly (улучшена стабильность полета)</span></li>
+                                <li class="update-item"><i class="fas fa-arrow-up"></i> <span class="lang-id" data-key="upd_12_2">Обновлен T0RNADO GUI (фикс крашей)</span></li>
+                                <li class="update-item feature"><i class="fas fa-plus-circle"></i> <span class="lang-id" data-key="upd_12_3">Добавлены настройки цвета GUI в самом скрипте</span></li>
+                                <li class="update-item feature"><i class="fas fa-plus-circle"></i> <span class="lang-id" data-key="upd_12_4">Добавлена функция FL1NG (отбрасывание игроков)</span></li>
+                            </ul>
+                        </div>
+                        <div class="update-card">
+                            <div class="update-header"><div class="update-ver">Версия 1.1</div><div class="update-date">Архив</div></div>
+                            <ul class="update-list">
+                                <li class="update-item"><i class="fas fa-wrench"></i> <span class="lang-id" data-key="upd_11_1">Обновлен Fly → FL4 (Новый алгоритм байпаса)</span></li>
+                                <li class="update-item feature"><i class="fas fa-plus-circle"></i> <span class="lang-id" data-key="upd_11_2">Добавлен T0RNADO GUI</span></li>
+                            </ul>
+                        </div>
+                        <div class="update-card">
+                            <div class="update-header"><div class="update-ver">Версия 1.0</div><div class="update-date">Релиз</div></div>
+                            <ul class="update-list">
+                                <li class="update-item feature"><i class="fas fa-rocket"></i> <span class="lang-id" data-key="upd_10_1">Глобальный релиз скрипта H4CK</span></li>
+                                <li class="update-item feature"><i class="fas fa-plus-circle"></i> <span class="lang-id" data-key="upd_10_2">Добавлен базовый Fly</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="page-inject">
+                    <h1 class="page-title"><i class="fas fa-syringe"></i> <span class="lang-id" data-key="nav_inject">Инжектор</span></h1>
+                    <div class="content-block external-link-block">
+                        <div class="ext-icon"><i class="fas fa-space-shuttle"></i></div>
+                        <h2 class="block-title lang-id" data-key="inject_title" style="border:none; padding:0; text-align:center; justify-content:center; font-size: 2rem;">Скачать Xeno Injector</h2>
+                        <p class="lang-id" data-key="inject_desc" style="margin-bottom: 30px; font-size: 1.1rem; color: rgba(255,255,255,0.6); max-width: 600px;">Официальный партнерский экзекутор для стабильной работы H4CK SCRIPT. Поддерживает 99% скриптов, быстрый инжект, без вылетов.</p>
+                        <a href="https://xeno.onl/download" target="_blank" class="btn-neon" style="--main-accent: #fff; --main-accent-rgb: 255,255,255; color: #fff;"><i class="fas fa-download"></i> <span class="lang-id" data-key="btn_download_xeno">Download Xeno</span></a>
+                    </div>
+                </div>
+
+                <div class="page" id="page-base">
+                    <h1 class="page-title"><i class="fas fa-database"></i> <span class="lang-id" data-key="nav_base">Roblox База</span></h1>
+                    <div class="iframe-container">
+                        <iframe src="https://xenoscripts.com/" title="Scripts Base"></iframe>
+                    </div>
+                </div>
+
+                <div class="page" id="page-console">
+                    <h1 class="page-title"><i class="fas fa-terminal"></i> <span class="lang-id" data-key="nav_console">Системная Консоль</span></h1>
+                    <div class="terminal-container">
+                        <div class="terminal-header">
+                            <span>H4CK_OS terminal v2.5.0</span>
+                            <span>root@h4ck-server:~</span>
+                        </div>
+                        <div class="terminal-output" id="term-output">
+                            <p class="term-sys">H4CK SYSTEM INITIALIZED...</p>
+                            <p>Loading kernel modules... <span style="color:#2ed573">[OK]</span></p>
+                            <p>Establishing secure connection... <span style="color:#2ed573">[OK]</span></p>
+                            <p>Type 'help' for available commands.</p>
+                        </div>
+                        <div class="terminal-input-line">
+                            <span class="terminal-prompt">root@h4ck:~#</span>
+                            <input type="text" class="terminal-input" id="term-input" autocomplete="off" spellcheck="false">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="page-settings">
+                    <h1 class="page-title"><i class="fas fa-cog"></i> <span class="lang-id" data-key="nav_settings">Настройки</span></h1>
+                    <div class="content-block">
+                        <h2 class="block-title"><i class="fas fa-sliders-h"></i> <span class="lang-id" data-key="set_ui_title">Интерфейс</span></h2>
+                        
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <div class="setting-name lang-id" data-key="set_anim_title">Анимации частиц (Фон)</div>
+                                <div class="setting-desc lang-id" data-key="set_anim_desc">Отключите для повышения производительности слабого ПК</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-particles" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <div class="setting-name lang-id" data-key="set_fps_title">Счетчик FPS/Ping</div>
+                                <div class="setting-desc lang-id" data-key="set_fps_desc">Отображение системной информации в шапке сайта</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-sysinfo" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row" style="border-bottom: none;">
+                            <div class="setting-info">
+                                <div class="setting-name lang-id" data-key="set_color_title">Акцентный Цвет</div>
+                                <div class="setting-desc lang-id" data-key="set_color_desc">Изменить главный цвет неонового интерфейса</div>
+                            </div>
+                            <div class="color-options">
+                                <button class="color-btn active" style="background: #bc13fe; color: #bc13fe;" data-color="188, 19, 254" data-hex="#bc13fe"></button>
+                                <button class="color-btn" style="background: #2ed573; color: #2ed573;" data-color="46, 213, 115" data-hex="#2ed573"></button>
+                                <button class="color-btn" style="background: #1e90ff; color: #1e90ff;" data-color="30, 144, 255" data-hex="#1e90ff"></button>
+                                <button class="color-btn" style="background: #ff4757; color: #ff4757;" data-color="255, 71, 87" data-hex="#ff4757"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="page-ad">
+                    <h1 class="page-title"><i class="fas fa-ad"></i> <span class="lang-id" data-key="nav_ad">Реклама</span></h1>
+                    <div class="content-block" style="text-align: center; padding: 50px 20px;">
+                        <h2 class="block-title lang-id" data-key="ad_title" style="justify-content: center; font-size: 2rem;">Сотрудничество</h2>
+                        <p class="lang-id" data-key="ad_desc" style="font-size: 1.1rem; color: rgba(255,255,255,0.7); margin-bottom: 30px;">Размещение ваших скриптов в разделе "Рекомендуем", баннеры, интеграция инжекторов. Свяжитесь с нами по почте:</p>
+                        <div class="email-box">224sdw3e25@gmail.com</div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <div id="music-player">
+        <div class="player-header"><div class="drag-handle"></div></div>
+        <div class="player-content">
+            <iframe id="youtube-embed" src="https://www.youtube.com/embed/5qap5aO4i9A?enablejsapi=1&autoplay=0&controls=0&loop=1&playlist=5qap5aO4i9A" allow="autoplay"></iframe>
+            <div class="player-overlay">
+                <div class="album-art"><i class="fas fa-music"></i></div>
+                <div class="track-info">
+                    <div class="track-title">Phonk Drift Radio</div>
+                    <div class="track-artist">Live Stream • 24/7</div>
+                </div>
+                <div class="player-controls"><button id="pl-play"><i class="fas fa-play"></i></button></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================
+           🌐 ЛОКАЛИЗАЦИЯ V2.5 (RU/ENG)
+           ========================================= */
+        const langData = {
+            'ru': {
+                'sw_roblox': 'Roblox', 'sw_minecraft': 'Minecraft',
+                'cat_tools_rbx': 'Инструменты Roblox', 'cat_tools_mc': 'Инструменты Minecraft', 'cat_info': 'Информация', 'cat_system': 'Система',
+                'nav_home': 'Главная', 'nav_script': 'Скрипт', 'nav_recom': 'Рекомендуем', 'nav_base': 'Roblox База',
+                'nav_mc_clients': 'Клиенты', 'nav_mc_help': 'Инструкции',
+                'nav_inject': 'Инжектор', 'nav_console': 'Консоль', 'nav_settings': 'Настройки', 'nav_update': 'Обновления', 'nav_ad': 'Реклама',
+                
+                'sys_ping': 'Ping', 'home_status': 'UNDETECTED & ONLINE',
+                'welcome_text': 'Мы предоставляем',
+                'home_news_title': 'Последние новости', 'home_news_date': 'Сегодня:', 'home_news_text': 'Релиз V2.5! Интегрирован глобальный переключатель игр. Клиенты Minecraft вынесены в удобную структуру. Delta Client теперь доступен по прямой ссылке разработчика.',
+                'btn_start': 'Начать', 'btn_console': 'Система',
+
+                'script_load_title': 'Универсальный Загрузчик V2', 'script_desc': 'Скопируйте код ниже и вставьте в ваш экзекутор (рекомендуется Xeno или Electron). Скрипт автоматически обновляется из облака.',
+                'btn_copy_large': 'СКОПИРОВАТЬ СКРИПТ', 'script_warn_title': 'Внимание', 'script_warn_text': 'Наш скрипт работает по системе Keyless (без ключа). Остерегайтесь подделок. Оригинальный лоадер находится только на этом сайте.',
+
+                'recom_subtitle': 'Лучшие проверенные скрипты от наших партнеров. Копируй в один клик.',
+                'card_1_desc': 'Лучший аимбот и ESP для шутеров (TSB и др.). Полностью настраиваемый.', 'card_2_desc': 'Автоматический фарм денег и ресурсов в популярных тайкунах. Без вылетов.', 'card_3_desc': 'Набор крутых инструментов для троллинга: fling, chat spam, FE эффекты.', 'btn_copy': 'Скопировать',
+
+                'mc_clients_sub': 'Проверенные клиенты для анархии и мини-игр.',
+                'mc_meteor_desc': 'Легендарный бесплатный клиент для анархии. Встроенный Baritone и сотни модулей.', 'btn_download_site': 'Перейти на сайт',
+                'mc_venus_desc': 'Мощный клиент с упором на PvP составляющую. Отличный KillAura и AutoTotem.', 'btn_download_direct': 'Скачать (.jar)',
+                'mc_delta_desc': 'Приватный чит элитного уровня. Обход анти-читов на топовых серверах, уникальный дизайн.', 'btn_download_off': 'Официальный сайт',
+                
+                'mc_help_1_title': 'Как установить клиент (Fabric)', 'mc_help_1_1': 'Скачайте и установите Fabric Loader для вашей версии Minecraft.', 'mc_help_1_2': 'Скачайте файл клиента (.jar) из вкладки "Клиенты".', 'mc_help_1_3': 'Нажмите Win+R, введите %appdata%/.minecraft/mods и нажмите Enter.', 'mc_help_1_4': 'Переместите скачанный .jar файл в папку mods.', 'mc_help_1_5': 'Запустите лаунчер, выберите профиль Fabric и играйте!',
+                'mc_help_2_title': 'Советы', 'mc_help_2_1': 'Меню чита обычно открывается на правый Shift (RShift) или кнопку Insert.', 'mc_help_2_2': 'Бинды модулей можно настроить в самом GUI клиента.',
+                'mc_help_3_title': 'Предупреждения', 'mc_help_3_1': 'Использование на лицензионных серверах (Hypixel и др.) может привести к бану.', 'mc_help_3_2': 'Не качайте клиенты из сомнительных источников, используйте только ссылки в нашем хабе.',
+
+                'upd_current': 'Текущая версия',
+                'upd_12_1': 'Обновлен Fly (улучшена стабильность полета)', 'upd_12_2': 'Обновлен T0RNADO GUI (фикс крашей)', 'upd_12_3': 'Добавлены настройки цвета GUI в самом скрипте', 'upd_12_4': 'Добавлена функция FL1NG (отбрасывание игроков)',
+                'upd_11_1': 'Обновлен Fly → FL4 (Новый алгоритм байпаса)', 'upd_11_2': 'Добавлен T0RNADO GUI',
+                'upd_10_1': 'Глобальный релиз скрипта H4CK', 'upd_10_2': 'Добавлен базовый Fly',
+
+                'inject_title': 'Скачать Xeno Injector', 'inject_desc': 'Официальный партнерский экзекутор для стабильной работы H4CK SCRIPT. Поддерживает 99% скриптов, быстрый инжект, без вылетов.', 'btn_download_xeno': 'Download Xeno',
+
+                'set_ui_title': 'Интерфейс', 'set_anim_title': 'Анимации частиц (Фон)', 'set_anim_desc': 'Отключите для повышения производительности слабого ПК',
+                'set_fps_title': 'Счетчик FPS/Ping', 'set_fps_desc': 'Отображение системной информации в шапке сайта',
+                'set_color_title': 'Акцентный Цвет', 'set_color_desc': 'Изменить главный цвет неонового интерфейса',
+
+                'ad_title': 'Сотрудничество', 'ad_desc': 'Размещение ваших скриптов в разделе "Рекомендуем", баннеры, интеграция инжекторов. Свяжитесь с нами по почте:',
+                'notif_copy': 'Скопировано в буфер!', 'intro_1': 'Initializing Core', 'intro_2': 'Bypassing Security...', 'intro_3': 'Loading Modules...', 'intro_4': 'Welcome to V2.5'
+            },
+            'eng': {
+                'sw_roblox': 'Roblox', 'sw_minecraft': 'Minecraft',
+                'cat_tools_rbx': 'Roblox Tools', 'cat_tools_mc': 'Minecraft Tools', 'cat_info': 'Information', 'cat_system': 'System',
+                'nav_home': 'Home', 'nav_script': 'Script', 'nav_recom': 'Recommended', 'nav_base': 'Roblox Base',
+                'nav_mc_clients': 'Clients', 'nav_mc_help': 'Instructions',
+                'nav_inject': 'Injector', 'nav_console': 'Console', 'nav_settings': 'Settings', 'nav_update': 'Updates', 'nav_ad': 'Advertisement',
+                
+                'sys_ping': 'Ping', 'home_status': 'UNDETECTED & ONLINE',
+                'welcome_text': 'We provide',
+                'home_news_title': 'Latest News', 'home_news_date': 'Today:', 'home_news_text': 'Release V2.5! Integrated global game switcher. Minecraft clients moved to a clean structure. Delta Client now available via direct developer link.',
+                'btn_start': 'Start', 'btn_console': 'System',
+
+                'script_load_title': 'Universal Loader V2', 'script_desc': 'Copy the code below and paste it into your executor (Xeno or Electron recommended). Script updates automatically from cloud.',
+                'btn_copy_large': 'COPY SCRIPT', 'script_warn_title': 'Warning', 'script_warn_text': 'Our script works on a Keyless system. Beware of fakes. The original loader is only on this site.',
+
+                'recom_subtitle': 'Best verified scripts from our partners. Copy in one click.',
+                'card_1_desc': 'Best Aimbot & ESP for shooters (TSB etc.). Fully customizable.', 'card_2_desc': 'Autofarm money and resources in popular tycoons. Crash-free.', 'card_3_desc': 'Set of cool tools for trolling: fling, chat spam, FE effects.', 'btn_copy': 'Copy',
+
+                'mc_clients_sub': 'Verified clients for anarchy and mini-games.',
+                'mc_meteor_desc': 'Legendary free client for anarchy. Built-in Baritone and hundreds of modules.', 'btn_download_site': 'Go to website',
+                'mc_venus_desc': 'Powerful client focused on PvP. Great KillAura and AutoTotem.', 'btn_download_direct': 'Download (.jar)',
+                'mc_delta_desc': 'Elite level private cheat. Anti-cheat bypass on top servers, unique design.', 'btn_download_off': 'Official site',
+                
+                'mc_help_1_title': 'How to install client (Fabric)', 'mc_help_1_1': 'Download and install Fabric Loader for your MC version.', 'mc_help_1_2': 'Download client file (.jar) from "Clients" tab.', 'mc_help_1_3': 'Press Win+R, type %appdata%/.minecraft/mods and press Enter.', 'mc_help_1_4': 'Move the downloaded .jar file to mods folder.', 'mc_help_1_5': 'Launch game, select Fabric profile and play!',
+                'mc_help_2_title': 'Tips', 'mc_help_2_1': 'Cheat menu usually opens on Right Shift (RShift) or Insert key.', 'mc_help_2_2': 'Module keybinds can be configured in client GUI.',
+                'mc_help_3_title': 'Warnings', 'mc_help_3_1': 'Using on premium servers (Hypixel etc.) may result in ban.', 'mc_help_3_2': 'Do not download clients from shady sources, use only links in our hub.',
+
+                'upd_current': 'Current version',
+                'upd_12_1': 'Updated Fly (improved flight stability)', 'upd_12_2': 'Updated T0RNADO GUI (crash fixes)', 'upd_12_3': 'Added GUI color settings inside the script', 'upd_12_4': 'Added FL1NG function (throwing players)',
+                'upd_11_1': 'Updated Fly → FL4 (New bypass algorithm)', 'upd_11_2': 'Added T0RNADO GUI',
+                'upd_10_1': 'Global release of H4CK script', 'upd_10_2': 'Added basic Fly',
+
+                'inject_title': 'Download Xeno Injector', 'inject_desc': 'Official partner executor for stable H4CK SCRIPT operation. Supports 99% scripts, fast inject, no crashes.', 'btn_download_xeno': 'Download Xeno',
+
+                'set_ui_title': 'Interface', 'set_anim_title': 'Particle Animations (BG)', 'set_anim_desc': 'Disable to improve performance on low-end PC',
+                'set_fps_title': 'FPS/Ping Counter', 'set_fps_desc': 'Display system information in site header',
+                'set_color_title': 'Accent Color', 'set_color_desc': 'Change main neon interface color',
+
+                'ad_title': 'Cooperation', 'ad_desc': 'Placement of your scripts in "Recommended", banners, injector integration. Contact us via email:',
+                'notif_copy': 'Copied to clipboard!', 'intro_1': 'Initializing Core', 'intro_2': 'Bypassing Security...', 'intro_3': 'Loading Modules...', 'intro_4': 'Welcome to V2.5'
+            }
+        };
+
+        let currentLang = localStorage.getItem('h4ck_lang_v25') || 'ru';
+
+        function applyLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('h4ck_lang_v25', lang);
+            document.querySelectorAll('.lang-id').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if(langData[lang][key]) el.textContent = langData[lang][key];
+            });
+            initTypewriter();
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${lang === 'ru' ? 'ru' : 'eng'}`).classList.add('active');
+        }
+
+        document.getElementById('btn-ru').addEventListener('click', () => applyLang('ru'));
+        document.getElementById('btn-eng').addEventListener('click', () => applyLang('eng'));
+
+        /* =========================================
+           🎮 GAME SWITCHER LOGIC
+           ========================================= */
+        document.querySelectorAll('.game-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Изменяем активную кнопку игр
+                document.querySelectorAll('.game-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const targetGame = this.getAttribute('data-game');
+                
+                // Переключаем группы навигации
+                document.querySelectorAll('.nav-group').forEach(grp => grp.classList.remove('active'));
+                document.getElementById(`nav-${targetGame}`).classList.add('active');
+
+                // Имитируем клик по первой важной вкладке для выбранной игры
+                if(targetGame === 'roblox') {
+                    document.querySelector('.nav-item[data-page="script"] button').click();
+                } else if(targetGame === 'minecraft') {
+                    document.querySelector('.nav-item[data-page="mc-clients"] button').click();
+                }
+            });
+        });
+
+        /* =========================================
+           🎬 INTRO SEQUENCE
+           ========================================= */
+        function runIntro() {
+            const statusEl = document.getElementById('intro-status');
+            const introStrings = [langData[currentLang]['intro_1'], langData[currentLang]['intro_2'], langData[currentLang]['intro_3'], langData[currentLang]['intro_4']];
+            let step = 0;
+            const statusInterval = setInterval(() => {
+                if(step < introStrings.length) {
+                    statusEl.textContent = introStrings[step];
+                    statusEl.style.animation = 'none'; statusEl.offsetHeight; 
+                    statusEl.style.animation = 'fadeIn 0.4s ease forwards';
+                    step++;
+                } else { clearInterval(statusInterval); }
+            }, 700);
+            setTimeout(() => {
+                document.getElementById('intro-screen').classList.add('fade-out');
+                document.getElementById('app-container').classList.add('show');
+                setTimeout(() => document.getElementById('intro-screen').style.display = 'none', 1000);
+            }, 3000);
+        }
+
+        /* =========================================
+           🌌 CANVAS BACKGROUND
+           ========================================= */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [], particlesEnabled = true, w, h;
+        let mouse = { x: null, y: null, radius: 150 };
+
+        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+        window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+
+        function setCanvasSize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', setCanvasSize);
+        setCanvasSize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * w; this.y = Math.random() * h;
+                this.baseVx = (Math.random() - 0.5) * 0.8; this.baseVy = (Math.random() - 0.5) * 0.8;
+                this.vx = this.baseVx; this.vy = this.baseVy;
+                this.size = Math.random() * 2 + 0.5;
+                this.alpha = Math.random(); this.blinkSpeed = Math.random() * 0.02 + 0.005;
+            }
+            update() {
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x, dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx*dx + dy*dy);
+                    if (distance < mouse.radius) {
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        this.vx -= (dx / distance) * force * 0.5; this.vy -= (dy / distance) * force * 0.5;
+                    }
+                }
+                this.vx = this.vx * 0.95 + this.baseVx * 0.05; this.vy = this.vy * 0.95 + this.baseVy * 0.05;
+                this.x += this.vx; this.y += this.vy;
+                this.alpha += this.blinkSpeed;
+                if(this.alpha > 1 || this.alpha < 0) this.blinkSpeed *= -1;
+                if (this.x < 0 || this.x > w) this.baseVx *= -1;
+                if (this.y < 0 || this.y > h) this.baseVy *= -1;
+            }
+            draw() {
+                let rgbStr = getComputedStyle(document.documentElement).getPropertyValue('--main-accent-rgb').trim();
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${rgbStr}, ${Math.max(0, this.alpha)})`; ctx.fill();
+            }
+        }
+
+        function initBgCanvas() { particles = []; for (let i = 0; i < 120; i++) particles.push(new Particle()); animateCanvas(); }
+
+        function animateCanvas() {
+            if(!particlesEnabled) { ctx.clearRect(0, 0, w, h); requestAnimationFrame(animateCanvas); return; }
+            ctx.clearRect(0, 0, w, h);
+            let rgbStr = getComputedStyle(document.documentElement).getPropertyValue('--main-accent-rgb').trim();
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i]; p.update(); p.draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    let p2 = particles[j], dx = p.x - p2.x, dy = p.y - p2.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 140) {
+                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(${rgbStr}, ${(1 - (dist / 140)) * 0.25})`;
+                        ctx.lineWidth = 0.8; ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateCanvas);
+        }
+
+        /* =========================================
+           📑 ТАБЫ V2.5 (Fix Bugs)
+           ========================================= */
+        let isTransitioning = false;
+        document.querySelectorAll('.nav-item button, .navigate-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if(isTransitioning) return;
+                
+                let targetPageId = this.closest('[data-page]') ? this.closest('[data-page]').getAttribute('data-page') : this.getAttribute('data-target');
+                if(!targetPageId) return;
+
+                document.querySelectorAll('.nav-item').forEach(li => li.classList.remove('active'));
+                let navItem = document.querySelector(`.nav-item[data-page="${targetPageId}"]`);
+                if(navItem) navItem.classList.add('active');
+
+                const currentActive = document.querySelector('.page.active-page');
+                const nextActive = document.getElementById(`page-${targetPageId}`);
+
+                if(currentActive === nextActive) return;
+                isTransitioning = true;
+
+                if(currentActive) {
+                    currentActive.style.transform = 'translateY(-30px) scale(0.98)';
+                    currentActive.style.opacity = '0';
+                    setTimeout(() => {
+                        currentActive.classList.remove('active-page');
+                        currentActive.style.transform = ''; 
+                    }, 400); 
+                }
+                
+                if(nextActive) {
+                    setTimeout(() => {
+                        nextActive.classList.add('active-page');
+                        nextActive.scrollTop = 0;
+                        setTimeout(() => isTransitioning = false, 400);
+                    }, currentActive ? 400 : 0);
+                } else {
+                    isTransitioning = false;
+                }
+            });
+        });
+
+        /* =========================================
+           ⌨️ ЭФФЕКТ ПЕЧАТАНИЯ
+           ========================================= */
+        let twInterval;
+        function initTypewriter() {
+            const textEl = document.getElementById('tw-text');
+            const phrases = currentLang === 'ru' ? 
+                ['лучший софт.', 'топовые скрипты.', 'уникальный GUI.', 'FE эффекты.', 'твой успех XD.'] :
+                ['best software.', 'top scripts.', 'unique GUI.', 'FE effects.', 'your success XD.'];
+            let phraseIdx = 0, charIdx = 0, isDeleting = false, typeSpeed = 100;
+            if(twInterval) clearInterval(twInterval);
+            textEl.textContent = '';
+            function type() {
+                const currentPhrase = phrases[phraseIdx];
+                if (isDeleting) { textEl.textContent = currentPhrase.substring(0, charIdx - 1); charIdx--; typeSpeed = 40; } 
+                else { textEl.textContent = currentPhrase.substring(0, charIdx + 1); charIdx++; typeSpeed = 100; }
+
+                if (!isDeleting && charIdx === currentPhrase.length) { isDeleting = true; typeSpeed = 2500; } 
+                else if (isDeleting && charIdx === 0) { isDeleting = false; phraseIdx = (phraseIdx + 1) % phrases.length; typeSpeed = 500; }
+                twInterval = setTimeout(type, typeSpeed);
+            }
+            type();
+        }
+
+        /* =========================================
+           📋 КОПИРОВАНИЕ
+           ========================================= */
+        function showNotif() {
+            const notif = document.getElementById('notif');
+            document.getElementById('notif-msg').textContent = langData[currentLang]['notif_copy'];
+            notif.classList.add('show');
+            setTimeout(() => notif.classList.remove('show'), 2500);
+        }
+
+        document.getElementById('btn-copy-script').addEventListener('click', () => {
+            const code = 'getgenv().Theme = "DarkNeon"\nloadstring(game:HttpGet("https://raw.githubusercontent.com/h4ck-team/v2/main/loader.lua"))()';
+            navigator.clipboard.writeText(code).then(showNotif);
+        });
+
+        document.querySelectorAll('.copy-recom-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const scriptText = this.getAttribute('data-script');
+                navigator.clipboard.writeText(scriptText).then(() => {
+                    showNotif();
+                    const originalHTML = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    this.classList.add('copied');
+                    setTimeout(() => { this.innerHTML = originalHTML; this.classList.remove('copied'); }, 2000);
+                });
+            });
+        });
+
+        /* =========================================
+           📊 СИСТЕМНАЯ ИНФА
+           ========================================= */
+        let times = [], fps, sysInfoEnabled = true;
+        const fpsEl = document.getElementById('fps-val');
+        function refreshFps() {
+            window.requestAnimationFrame(() => {
+                if(!sysInfoEnabled) return refreshFps();
+                const now = performance.now();
+                while (times.length > 0 && times[0] <= now - 1000) times.shift();
+                times.push(now); fps = times.length; fpsEl.textContent = fps;
+                refreshFps();
+            });
+        }
+        const pingEl = document.getElementById('ping-val');
+        function updatePing() {
+            if(!sysInfoEnabled) { setTimeout(updatePing, 1000); return; }
+            pingEl.textContent = Math.floor(20 + Math.random() * 15);
+            setTimeout(updatePing, 1500 + Math.random() * 1000);
+        }
+        function fetchIP() {
+            fetch('https://api.ipify.org?format=json')
+                .then(r => r.json()).then(d => document.getElementById('ip-val').textContent = d.ip)
+                .catch(() => document.getElementById('ip-val').textContent = 'hidden');
+        }
+
+        /* =========================================
+           📟 КОНСОЛЬ
+           ========================================= */
+        const termInput = document.getElementById('term-input');
+        const termOutput = document.getElementById('term-output');
+        termInput.addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') {
+                const cmd = this.value.trim();
+                if(cmd) {
+                    termOutput.innerHTML += `<p><span class="terminal-prompt">root@h4ck:~#</span> ${cmd}</p>`;
+                    const lowCmd = cmd.toLowerCase();
+                    if(lowCmd === 'help') termOutput.innerHTML += `<p>Commands:<br>- help: show this<br>- clear: clear console<br>- status: server status<br>- inject: initiate injection</p>`;
+                    else if(lowCmd === 'clear') termOutput.innerHTML = '';
+                    else if(lowCmd === 'status') termOutput.innerHTML += `<p class="term-sys">Server Online. Latency: 24ms. Bypass: Active (Byfron V4).</p>`;
+                    else if(lowCmd === 'inject') {
+                        termOutput.innerHTML += `<p style="color: #ffbd2e;">Searching for process...</p>`;
+                        setTimeout(() => { termOutput.innerHTML += `<p class="term-err">ERROR: RobloxPlayerBeta.exe not found!</p>`; termOutput.scrollTop = termOutput.scrollHeight; }, 1000);
+                    } else termOutput.innerHTML += `<p class="term-err">Command not found: ${cmd}</p>`;
+                    termOutput.scrollTop = termOutput.scrollHeight;
+                }
+                this.value = '';
+            }
+        });
+
+        /* =========================================
+           ⚙️ НАСТРОЙКИ
+           ========================================= */
+        document.getElementById('toggle-particles').addEventListener('change', function() { particlesEnabled = this.checked; });
+        document.getElementById('toggle-sysinfo').addEventListener('change', function() {
+            sysInfoEnabled = this.checked;
+            document.querySelector('.sys-info').style.opacity = sysInfoEnabled ? '1' : '0';
+        });
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const hex = this.getAttribute('data-hex'), rgb = this.getAttribute('data-color');
+                document.documentElement.style.setProperty('--main-accent', hex);
+                document.documentElement.style.setProperty('--main-accent-rgb', rgb);
+                document.getElementById('custom-cursor').style.borderColor = hex;
+            });
+        });
+
+        /* =========================================
+           🎧 МИНИ-ПЛЕЕР
+           ========================================= */
+        const player = document.getElementById('music-player'), header = player.querySelector('.player-header');
+        let isDragging = false, startX, startY, initialX, initialY;
+        header.addEventListener('mousedown', (e) => {
+            isDragging = true; player.classList.add('dragging');
+            const rect = player.getBoundingClientRect();
+            initialX = rect.left; initialY = rect.top; startX = e.clientX; startY = e.clientY;
+            player.style.bottom = 'auto'; player.style.right = 'auto';
+            player.style.left = initialX + 'px'; player.style.top = initialY + 'px';
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return; e.preventDefault();
+            let newX = initialX + (e.clientX - startX), newY = initialY + (e.clientY - startY);
+            if(newX < 10) newX = 10; if(newY < 10) newY = 10;
+            if(newX > window.innerWidth - player.offsetWidth - 10) newX = window.innerWidth - player.offsetWidth - 10;
+            if(newY > window.innerHeight - player.offsetHeight - 10) newY = window.innerHeight - player.offsetHeight - 10;
+            player.style.left = newX + 'px'; player.style.top = newY + 'px';
+        });
+        window.addEventListener('mouseup', () => { isDragging = false; player.classList.remove('dragging'); });
+        
+        const playBtn = document.getElementById('pl-play'), ytEmbed = document.getElementById('youtube-embed');
+        let isPlaying = false;
+        playBtn.addEventListener('click', () => {
+            if(!isPlaying) {
+                ytEmbed.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>'; isPlaying = true;
+                player.style.borderColor = 'var(--main-accent)'; player.style.boxShadow = 'var(--glow-shadow)';
+            } else {
+                ytEmbed.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                playBtn.innerHTML = '<i class="fas fa-play"></i>'; isPlaying = false;
+                player.style.borderColor = 'rgba(255,255,255,0.1)'; player.style.boxShadow = 'none';
+            }
+        });
+
+        /* =========================================
+           🖱 КУРСОР
+           ========================================= */
+        const cursor = document.getElementById('custom-cursor');
+        window.addEventListener('mousemove', (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
+        window.addEventListener('mousedown', () => cursor.style.transform = 'translate(-50%, -50%) scale(0.7)');
+        window.addEventListener('mouseup', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
+        document.body.addEventListener('mouseover', function(e) {
+            if (e.target.closest('a, button, .nav-link, .script-card, .setting-row, input, .player-header, .game-btn')) {
+                 cursor.classList.add('hover');
+            } else { cursor.classList.remove('hover'); }
+        });
+
+        /* =========================================
+           🔥 INIT
+           ========================================= */
+        window.addEventListener('load', () => {
+            applyLang(currentLang);
+            initBgCanvas();
+            runIntro();
+            refreshFps();
+            updatePing();
+            fetchIP();
+        });
+    </script>
+</body>
+</html>
